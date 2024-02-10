@@ -44,9 +44,13 @@
 
 # COMMAND ----------
 
-# TODO
-df = (spark.FILL_IN
-)
+# ANSWER
+df = (spark
+      .readStream
+      .option("maxFilesPerTrigger", 1)
+      .format("delta")
+      .load(DA.paths.sales)
+     )
 
 # COMMAND ----------
 
@@ -71,9 +75,17 @@ DA.validate_1_1(df)
 
 # COMMAND ----------
 
-# TODO
-coupon_sales_df = (df.FILL_IN
-)
+# ANSWER
+from pyspark.sql.functions import col, explode
+
+coupon_sales_df = (df
+                   .withColumn("items", explode(col("items")))
+                   .filter(col("items.coupon").isNotNull())
+                  )
+
+# COMMAND ----------
+
+df.withColumn("items", explode(col("items"))).filter(col("items.coupon").isNotNull()).show()
 
 # COMMAND ----------
 
@@ -106,7 +118,14 @@ DA.validate_2_1(coupon_sales_df.schema)
 coupons_checkpoint_path = f"{DA.paths.checkpoints}/coupon-sales"
 coupons_output_path = f"{DA.paths.working_dir}/coupon-sales/output"
 
-coupon_sales_query = (coupon_sales_df.FILL_IN)
+coupon_sales_query = (coupon_sales_df.
+                      writeStream
+                      .format("delta")
+                      .outputMode("append")
+                      .queryName("coupon_sales")
+                      .trigger(processingTime="1 second")
+                      .option("checkpointLocation", coupons_checkpoint_path)
+                      .start(coupons_output_path))
 
 DA.block_until_stream_is_ready(coupon_sales_query)
 
@@ -132,12 +151,12 @@ DA.validate_3_1(coupon_sales_query)
 # COMMAND ----------
 
 # TODO
-query_id = coupon_sales_query.FILL_IN
+query_id = coupon_sales_query.id
 
 # COMMAND ----------
 
 # TODO
-query_status = coupon_sales_query.FILL_IN
+query_status = coupon_sales_query.status
 
 # COMMAND ----------
 
@@ -160,8 +179,9 @@ DA.validate_4_1(query_id, query_status)
 
 # COMMAND ----------
 
-# TODO
-coupon_sales_query.FILL_IN
+# ANSWER
+coupon_sales_query.stop()
+coupon_sales_query.awaitTermination()
 
 # COMMAND ----------
 
@@ -182,7 +202,12 @@ DA.validate_5_1(coupon_sales_query)
 
 # COMMAND ----------
 
-# TODO
+# ANSWER
+display(spark.read.format("delta").load(coupons_output_path))
+
+# COMMAND ----------
+
+spark.read.format("delta").load(coupons_output_path).show()
 
 # COMMAND ----------
 
