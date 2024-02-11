@@ -66,6 +66,21 @@ DA.start_pipeline()
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC select * from user1_37826323_zslc_da_adewd_streaming_etl.date_lookup limit 100
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from user1_37826323_zslc_da_adewd_streaming_etl.bronze limit 100
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from user1_37826323_zslc_da_adewd_streaming_etl.distinct_topics limit 100
+
+# COMMAND ----------
+
 # DBTITLE 0,--i18n-54757b26-7ff7-45c2-92de-2499701afedb
 # MAGIC %md
 # MAGIC ## Land New Data
@@ -99,7 +114,7 @@ DA.start_pipeline()  # Trigger another pipeline update
 
 # COMMAND ----------
 
-# DA.cleanup()
+ DA.cleanup()
 
 # COMMAND ----------
 

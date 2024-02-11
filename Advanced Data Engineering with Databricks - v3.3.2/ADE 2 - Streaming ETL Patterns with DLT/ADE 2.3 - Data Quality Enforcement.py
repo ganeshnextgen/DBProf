@@ -93,6 +93,16 @@ DA.start_pipeline()  # Trigger another pipeline update
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC select * from user1_37826323_zslc_da_adewd_streaming_etl.bpm_quarantine limit 10
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from user1_37826323_zslc_da_adewd_streaming_etl.bpm_silver limit 100
+
+# COMMAND ----------
+
 # DBTITLE 0,--i18n-da44b9cc-c9e4-452c-8bb1-09ce412ab10f
 # MAGIC %md
 # MAGIC ## Run Cleanup
@@ -100,7 +110,7 @@ DA.start_pipeline()  # Trigger another pipeline update
 
 # COMMAND ----------
 
-# DA.cleanup()
+ DA.cleanup()
 
 # COMMAND ----------
 
